@@ -7,6 +7,7 @@ import codecs
 import base64
 import os
 from time import sleep
+
 billetera = {
   "pubkey": '020fe45e80bf106640697d8ae6c7c548f4daebd2281c8e126c81b9f1a95eeb1f98', 
   "cert": '~/.polar/networks/4/volumes/lnd/alice/tls.cert', 
@@ -89,49 +90,52 @@ def main():
   #-------------------------------------------------------
 
   # Se hace una petición al nodo para poder obtener su informacion general.
-  response = stub.GetInfo(ln.GetInfoRequest())
-  print('\n=================================================>\n')
-  print("Has accedido al nodo: ", response.alias)
-  print("Su llave pública: ", response.identity_pubkey)
-  print("Version: ", response.version)
-  print('\n=================================================>\n')
-  #------------------------------------------------------------------------
+  try:
+    response = stub.GetInfo(ln.GetInfoRequest())
+    print('\n=================================================>\n')
+    print("Has accedido al nodo: ", response.alias)
+    print("Su llave pública: ", response.identity_pubkey)
+    print("Version: ", response.version)
+    print('\n=================================================>\n')
+    #------------------------------------------------------------------------
 
-  # Segundo menú, realiza las peticiones deseadas al nodo.
-  while True:
-    print("\nEscoje qué acción hacer:")
-    print("1. Abrir un canal")
-    print("2. Revisar por canales pendientes")
-    print("3. Cerrar canal")
-    print("4. Crear Factura")
-    print("5. Pagar Factura")
-    print("6. Transacciones")
-    print("7. Decifrar PR")
-    print("8. Exit")
+    # Segundo menú, realiza las peticiones deseadas al nodo.
+    while True:
+      print("\nEscoje qué acción hacer:")
+      print("1. Abrir un canal")
+      print("2. Revisar por canales pendientes")
+      print("3. Cerrar canal")
+      print("4. Crear Factura")
+      print("5. Pagar Factura")
+      print("6. Transacciones")
+      print("7. Decifrar PR")
+      print("8. Exit")
 
-    choice = input("Ingresa tu respuesta: ")
+      choice = input("Ingresa tu respuesta: ")
 
-    if choice == '1':
-      request_open_channel(stub)
-    elif choice == '2':
-      check_pending_channels(stub)
-    elif choice == '3':
-      close_channel(stub)
-    elif choice == '4':
-      create_invoice(stub)
-    elif choice == '5':
-      pay_invoice(stub)
-    elif choice == '6':
-      get_transactions(stub)
-    elif choice == '7':
-      pr = input("Ingresa una petigcion de pago: ")
-      decoded = decode_pr(stub, pr)
-      print(decoded)
-    elif choice == '8':
-      break
-    else:
-      print("\n<===Invalid choice===>\n")
-  #--------------------------------------------------------
+      if choice == '1':
+        request_open_channel(stub)
+      elif choice == '2':
+        check_pending_channels(stub)
+      elif choice == '3':
+        close_channel(stub)
+      elif choice == '4':
+        create_invoice(stub)
+      elif choice == '5':
+        pay_invoice(stub)
+      elif choice == '6':
+        get_transactions(stub)
+      elif choice == '7':
+        pr = input("Ingresa una petigcion de pago: ")
+        decoded = decode_pr(stub, pr)
+        print(decoded)
+      elif choice == '8':
+        break
+      else:
+        print("\n<===Invalid choice===>\n")
+    #--------------------------------------------------------
+  except grpc.RpcError as e:
+    print("Error: Revisa la informacion del nodo al que intentaste acceder por favor.\n Mas informacion del error:\n", e.details())
 
 def request_open_channel(stub):
   print("\nrequest_open_channel=======================================>\n")
