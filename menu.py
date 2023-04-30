@@ -31,6 +31,24 @@ providor = {
     "admin_macaroon": '~/.polar/networks/4/volumes/lnd/carol/data/chain/bitcoin/regtest/admin.macaroon', 
     "channel": '127.0.0.1:10003'
 }
+def main():
+    print("""
+    Hola bienvenido/a, te contaremos la historia de Lisa con Lightning Network. 
+    Esta historia contiene un tesoro que ganaras si la terminas. Lisa es dueña de 
+    una cafeteria  en la Univeridad del Valle de Guatemala. Ella quiere poder 
+    transaccionar Bitcoin a través de su nodo de Lightning Network recién instalado. 
+    
+    Lisa conoce de una billetera de LN llamada Trueno, y quiere recibir pagos a 
+    travez de ellos ya que es la billetera más usada por los estudiantes de la UVG.
+    Por otro lado a Lisa le intereza tener sus pagos automatizados con el sistema de 
+    pagos de su proveedor de pan PanItalo. 
+    
+    DESAFIO:
+    Si logras que un cliente de Trueno pague a la panadería de Lisa y luego que 
+    Lisa le pague el pan a PanItalo ganarás una llave a el tesoro.
+    """)
+    node_config_menu()
+
 
 def node_config_menu():
     # display the node configuration menu
@@ -58,6 +76,14 @@ def node_config_menu():
         node_config_menu()
 
 def node_action_menu(node_connection):
+    check = challenge()
+    if check:
+        print(f"""
+        FELICIDADES, HAZ COMPLETADO EL DESAFIO!
+        Llave del tesoro:
+        {check}
+        """)
+        return
     response, err = node_connection.get_info()
     if err:
         print(err)
@@ -230,7 +256,40 @@ def action_manager(action, node_pk, destinated_pk):
         elif destinated_pk == coffee_shop["pubkey"]:
             print(draws.transaction_drawings["panaderia_" + action + "_cafeteria"])
         return
-
     return
 
-node_config_menu()
+def challenge():
+    ch1 = c1()
+    ch2 = c2()
+    if ch1 and ch2:
+        clue = wallet["name"]+coffee_shop["name"]+providor["name"]
+        key = base64.b64encode(clue.encode('utf-8'))
+        return key.decode('utf-8')
+    return
+
+
+def c1():
+    node_connection = NodeConnection(wallet)
+    response, err = node_connection.get_payments()
+    if err:
+        print(err)
+        node_action_menu(node_connection)
+    for payment in response.payments:
+        decoded, err = node_connection.decode_pr(payment.payment_request)
+        if decoded.destination == coffee_shop["pubkey"]:
+            return True
+    return False
+            
+def c2():
+    node_connection = NodeConnection(coffee_shop)
+    response, err = node_connection.get_payments()
+    if err:
+        print(err)
+        node_action_menu(node_connection)
+    for payment in response.payments:
+        decoded, err = node_connection.decode_pr(payment.payment_request)
+        if decoded.destination == providor["pubkey"]:
+            return True
+    return False
+
+main()
