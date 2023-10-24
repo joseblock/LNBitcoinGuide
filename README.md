@@ -12,6 +12,7 @@ This project uses a python gRPC server to consume a group of nodes in the ligtni
   <img width="891" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/1856d727-3903-40c5-af16-c232abfaf513">
 - In case it didnt work, try building the network by yourself.
 ## Change source
-- `git clone `
+- `git clone git@github.com:joseblock/LNBitcoinGuide.git`
+- 
 
 
