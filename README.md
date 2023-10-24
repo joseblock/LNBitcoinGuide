@@ -12,7 +12,20 @@ This project uses a python gRPC server to consume a group of nodes in the ligtni
   <img width="891" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/1856d727-3903-40c5-af16-c232abfaf513">
 - In case it didnt work, try building the network by yourself.
 ## Change source
-- `git clone git@github.com:joseblock/LNBitcoinGuide.git`
-- 
+Clone the repo: `git clone git@github.com:joseblock/LNBitcoinGuide.git`
 
+Go to `/lndgrpc.py` and modify the following variables:
+  - billetera
+  - cafeteria
+  - panaderia
+
+Each one of this variables will contain this fields:
+  - `"pubkey": '020fe45e80bf106640697d8ae6c7c548f4daebd2281c8e126c81b9f1a95eeb1f98',` 
+  - `"cert": '~/.polar/networks/4/volumes/lnd/alice/tls.cert',`
+  - `"admin_macaroon": '~/.polar/networks/4/volumes/lnd/alice/data/chain/bitcoin/regtest/admin.macaroon',`
+  - `"channel": '127.0.0.1:10001'`
+
+Upadte them as required by comparing the node information in polar:
+  <img width="884" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/f6f0507e-37f0-4017-b244-0a64453eaeb9">
+  <img width="1038" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/fec54fef-93c6-4f11-bfe4-2dba390b7f2a">
 
