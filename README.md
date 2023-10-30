@@ -1,5 +1,5 @@
 # LNBitcoinGuide
-This project uses a python gRPC server to consume a group of nodes in the ligtning network.
+This project tells a story that will help developers and enthusiasts understand how the lightning network funcitons. It uses a python gRPC server to consume a group of nodes in the ligtning network.
 ## Requirements
 - Download [Polar](https://lightningpolar.com/)
   - Install Docker
