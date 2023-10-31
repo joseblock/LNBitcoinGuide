@@ -6,7 +6,8 @@ This project tells a story that will help developers and enthusiasts understand 
     <img width="151" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/efb5bfb7-6dbf-4262-b2e0-be14f89e6896">
   - To open it you need to check your Privacy and Security settings on (IOs) 
   - Install Docker Desktop
-  - Install [Docker-Compose](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually)
+  - Install [Docker-Compose](https://docs.docker.com/desktop/release-notes/)
+    - For mac users Docker Desktop does not include docker compose since July 2023
   - Test that Polar UI works
 ## Import network
 - Clone the repo: `git clone`
