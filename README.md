@@ -16,6 +16,7 @@ This project tells a story that will help developers and enthusiasts understand 
 - Drag the LNBTCGuide.polar.zip file to recreate the network.
 - It should look like this:
   <img width="891" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/1856d727-3903-40c5-af16-c232abfaf513">
+- Now you can press the start button.
 - In case it didnt work, try building the network by yourself.
 ## Change source
 
