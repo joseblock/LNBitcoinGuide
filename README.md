@@ -20,7 +20,7 @@ This project tells a story that will help developers and enthusiasts understand 
 - In case it didnt work, try building the network by yourself.
 ## Change source
 
-Go to `/lndgrpc.py` and modify the following variables:
+Go to `/menu.py` and modify the following variables:
   - billetera
   - cafeteria
   - panaderia
@@ -34,4 +34,6 @@ Each one of this variables will contain this fields:
 Upadte them as required by comparing the node information in polar:
   <img width="884" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/f6f0507e-37f0-4017-b244-0a64453eaeb9">
   <img width="1038" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/fec54fef-93c6-4f11-bfe4-2dba390b7f2a">
+## Run the code:
+  - `python3 menu.py` 
 
