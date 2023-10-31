@@ -1,13 +1,14 @@
 # LNBitcoinGuide
-This project tells a story that will help developers and enthusiasts understand how the lightning network funcitons. It uses a python gRPC server to consume a group of nodes in the ligtning network.
+This project tells a story that will help developers and enthusiasts understand how the lightning network funcitons. It uses a python gRPC server to consume a group of LN nodes.
 ## Requirements
 - Download [Polar](https://lightningpolar.com/)
-  - When trying to open the Polar app this might appear.
-    <img width="151" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/efb5bfb7-6dbf-4262-b2e0-be14f89e6896">
-  - To open it you need to check your Privacy and Security settings on (IOs) 
+  - If you are having trouble opening the polar app:
+    - Go to your Privacy and Security settings on (IOs) and click on Open Anyway.
+      ![image](https://github.com/joseblock/LNBitcoinGuide/assets/40869458/24d6371a-65f3-4b87-a2ab-254604943562)
+
   - Install Docker Desktop
   - Install [Docker-Compose](https://docs.docker.com/desktop/release-notes/)
-    - For mac users Docker Desktop does not include docker compose since July 2023
+    - (IOs) To have Docker Compose install a Docker Desktop version before July 2023.
   - Test that Polar UI works
 ## Import network
 - Clone the repo: `git clone`
