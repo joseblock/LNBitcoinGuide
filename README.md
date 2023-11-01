@@ -22,9 +22,9 @@ This project tells a story that will help developers and enthusiasts understand 
 ## Change source
 
 Go to `/menu.py` and modify the following variables:
-  - billetera
-  - cafeteria
-  - panaderia
+  - wallet
+  - coffee_shop
+  - providor
 
 Each one of this variables will contain this fields:
   - `"pubkey": '020fe45e80bf106640697d8ae6c7c548f4daebd2281c8e126c81b9f1a95eeb1f98',` 
