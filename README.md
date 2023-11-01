@@ -32,7 +32,7 @@ Each one of this variables will contain this fields:
   - `"admin_macaroon": '~/.polar/networks/4/volumes/lnd/alice/data/chain/bitcoin/regtest/admin.macaroon',`
   - `"channel": '127.0.0.1:10001'`
 
-Upadte them as required by comparing the node information in polar:
+Update them by replacing each field mentioned before with alice, bob and carols node information in polar:
   <img width="884" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/f6f0507e-37f0-4017-b244-0a64453eaeb9">
   <img width="1038" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/fec54fef-93c6-4f11-bfe4-2dba390b7f2a">
 ## Run the code:
