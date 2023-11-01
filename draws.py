@@ -209,6 +209,6 @@ transaction_drawings = {
 
 nodes_info = {
     "Trueno" : billetera_string,
-    "Cafeteria" : cafeteria_string,
-    "PanItalo" : panaderia_string
+    "Cafetería" : cafeteria_string,
+    "Panadería" : panaderia_string
 }

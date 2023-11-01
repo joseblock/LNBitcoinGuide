@@ -12,25 +12,26 @@ import draws
 
 wallet = {
     "name": 'Trueno',
-    "pubkey": '020fe45e80bf106640697d8ae6c7c548f4daebd2281c8e126c81b9f1a95eeb1f98', 
-    "cert": '~/.polar/networks/4/volumes/lnd/alice/tls.cert', 
-    "admin_macaroon": '~/.polar/networks/4/volumes/lnd/alice/data/chain/bitcoin/regtest/admin.macaroon', 
-    "channel": '127.0.0.1:10001'
+    "pubkey": '', 
+    "cert": '', 
+    "admin_macaroon": '', 
+    "channel": ''
 }
 coffee_shop = {
-    "name": 'Cafeteria',
-    "pubkey": '03e3b403708d32926650d0669d5aacea96e09415739cc6c512b41ff7938d77f4e7', 
-    "cert": '~/.polar/networks/4/volumes/lnd/bob/tls.cert', 
-    "admin_macaroon": '~/.polar/networks/4/volumes/lnd/bob/data/chain/bitcoin/regtest/admin.macaroon', 
-    "channel": '127.0.0.1:10002'
+    "name": 'Cafetería',
+    "pubkey": '', 
+    "cert": '', 
+    "admin_macaroon": '', 
+    "channel": ''
 }
 providor = {
-    "name": 'PanItalo',
-    "pubkey": '0341f4b5fa8c1775da3f66d1dde760895d1af15053ec45338ab8e2edaeed02f364', 
-    "cert": '~/.polar/networks/4/volumes/lnd/carol/tls.cert', 
-    "admin_macaroon": '~/.polar/networks/4/volumes/lnd/carol/data/chain/bitcoin/regtest/admin.macaroon', 
-    "channel": '127.0.0.1:10003'
+    "name": 'Panadería',
+    "pubkey": '', 
+    "cert": '', 
+    "admin_macaroon": '', 
+    "channel": ''
 }
+
 def main():
     print("""
     Hola bienvenido/a, te contaremos la historia de Lisa con Lightning Network. 
@@ -41,21 +42,26 @@ def main():
     Lisa conoce de una billetera de LN llamada Trueno, y quiere recibir pagos a 
     travez de ellos ya que es la billetera más usada por los estudiantes de la UVG.
     Por otro lado a Lisa le intereza tener sus pagos automatizados con el sistema de 
-    pagos de su proveedor de pan PanItalo. 
+    pagos de su proveedor de pan. 
     
     DESAFIO:
     Si logras que un cliente de Trueno pague a la panadería de Lisa y luego que 
-    Lisa le pague el pan a PanItalo ganarás una llave a el tesoro.
+    Lisa le pague el pan a la panadería ganarás una llave a el tesoro.
     """)
+    print('\n===========================================================\n')
+    display_node_info(NodeConnection(coffee_shop))
+    display_node_info(NodeConnection(wallet))
+    display_node_info(NodeConnection(providor))
+    print('\n===========================================================\n')
     node_config_menu()
 
-
 def node_config_menu():
+    challenge()
     # display the node configuration menu
     print("\nElige a qué nodo conectarte.")
     print("1. billetera Trueno")
-    print("2. cafeteria de Lisa")
-    print("3. proveedor PanItalo")
+    print("2. cafetería de Lisa")
+    print("3. panadería")
     print("4. Salir")
 
     choice = input("Ingresa el numero de tu eleccion: ")
@@ -76,37 +82,22 @@ def node_config_menu():
         node_config_menu()
 
 def node_action_menu(node_connection):
-    check = challenge()
-    if check:
-        print(f"""
-        FELICIDADES, HAZ COMPLETADO EL DESAFIO!
-        Llave del tesoro:
-        {check}
-        """)
-        return
-    response, err = node_connection.get_info()
-    if err:
-        print(err)
-        return
     node, err = node_connection.node_info()
     if err:
         print(err)
         return
     print('\n===========================================================\n')
-    print("Estas en el nodo: ", node["name"])
-    print("Su llave pública: ", response.identity_pubkey)
-    print("Version: ", response.version)
-    print(draws.nodes_info[node["name"]])
+    display_node_info(node_connection)
     print('===========================================================\n')
 
     #=======================================
     print("\nEscoje qué acción hacer:")
     print("1. Abrir un canal")
-    print("2. Revisar por canales pendientes")
+    print("2. Revisar canales pendientes")
     print("3. Cerrar canal")
     print("4. Crear Factura")
     print("5. Pagar Factura")
-    print("6. Transacciones")
+    print("6. Ver Transacciones")
     print("7. Decifrar PR")
     print("8. Regresar")
 
@@ -124,6 +115,11 @@ def node_action_menu(node_connection):
         node, err = node_connection.node_info()
         drawer("request_open_channel", node["pubkey"], pubkey)
         print(f"""    Monto: {funding_amount}         ==> BALANCE <==       Monto: {push_satoshis}""")
+        print("""
+            Recuerda que al crear un canal lo que haces es una transaccion de bitcoin,
+            para que este funcione correctamente. Por lo tanto se debe minar un bloque,
+            para que se confirme la transaccion.
+        """)
         node_action_menu(node_connection)
 
     elif choice == '2':
@@ -196,6 +192,19 @@ def node_action_menu(node_connection):
         print("\n<===Invalid choice===>\n")
         node_action_menu(node_connection)
 
+def display_node_info(node_connection):
+    response, err = node_connection.get_info()
+    if err:
+        print(err)
+        return
+    node, err = node_connection.node_info()
+    if err:
+        print(err)
+        return
+    print("Estas en el nodo: ", node["name"])
+    print("Su llave pública: ", response.identity_pubkey)
+    print("Version: ", response.version)
+    print(draws.nodes_info[node["name"]])
 
 def get_transactions(node_connection):
     response, err = node_connection.get_invoices()
@@ -206,7 +215,8 @@ def get_transactions(node_connection):
         decoded, err = node_connection.decode_pr(invoice.payment_request)
         if err:
             print(err)
-        print(f"Confirmacion de pago: {'Si se pagó' if invoice.settled else 'No se pagó'}\n=================================================>\n")
+        print("\n=================================================>\n")
+        print(f"Confirmacion de pago: {'Si se pagó' if invoice.settled else 'No se pagó'}")
         print(f"Monto: {invoice.value}")
         print(f"Mensaje: {invoice.memo}")
         print(f"Llave publica destinataria: {decoded.destination}\n")
@@ -264,7 +274,12 @@ def challenge():
     if ch1 and ch2:
         clue = wallet["name"]+coffee_shop["name"]+providor["name"]
         key = base64.b64encode(clue.encode('utf-8'))
-        return key.decode('utf-8')
+        print(f"""
+        FELICIDADES, HAZ COMPLETADO EL DESAFIO!
+        Llave del tesoro:
+        {key.decode('utf-8')}
+        """)
+        raise SystemExit(0)
     return
 
 
@@ -272,8 +287,8 @@ def c1():
     node_connection = NodeConnection(wallet)
     response, err = node_connection.get_payments()
     if err:
-        print(err)
-        node_action_menu(node_connection)
+        print("\n", err)
+        node_config_menu()
     for payment in response.payments:
         decoded, err = node_connection.decode_pr(payment.payment_request)
         if decoded.destination == coffee_shop["pubkey"]:
@@ -284,8 +299,8 @@ def c2():
     node_connection = NodeConnection(coffee_shop)
     response, err = node_connection.get_payments()
     if err:
-        print(err)
-        node_action_menu(node_connection)
+        print("\n", err)
+        node_config_menu()
     for payment in response.payments:
         decoded, err = node_connection.decode_pr(payment.payment_request)
         if decoded.destination == providor["pubkey"]:

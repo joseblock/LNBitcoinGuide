@@ -6,23 +6,32 @@ import lightning_pb2_grpc as lnrpc
 
 class NodeConnection:
     def __init__(self, node):
-        self.node = node
-        self.cert = open(os.path.expanduser(node["cert"]), 'rb').read()
-        macaroon_bytes = open(os.path.expanduser(node["admin_macaroon"]), 'rb').read()
-        self.macaroon = codecs.encode(macaroon_bytes, 'hex')
-        os.environ["GRPC_SSL_CIPHER_SUITES"] = 'HIGH+ECDSA'
-        metadata = [('macaroon', self.macaroon)]
-        auth_credentials = grpc.metadata_call_credentials(lambda context, callback: callback(metadata, None))
-        ssl_credentials = grpc.ssl_channel_credentials(self.cert)
-        channel_credentials = grpc.composite_channel_credentials(ssl_credentials, auth_credentials)
-        channel = grpc.secure_channel(self.node["channel"], channel_credentials)
-        self.stub = lnrpc.LightningStub(channel)
+        try:
+            self.node = node
+            self.cert = open(os.path.expanduser(node["cert"]), 'rb').read()
+            macaroon_bytes = open(os.path.expanduser(node["admin_macaroon"]), 'rb').read()
+            self.macaroon = codecs.encode(macaroon_bytes, 'hex')
+            os.environ["GRPC_SSL_CIPHER_SUITES"] = 'HIGH+ECDSA'
+            metadata = [('macaroon', self.macaroon)]
+            auth_credentials = grpc.metadata_call_credentials(lambda context, callback: callback(metadata, None))
+            ssl_credentials = grpc.ssl_channel_credentials(self.cert)
+            channel_credentials = grpc.composite_channel_credentials(ssl_credentials, auth_credentials)
+            channel = grpc.secure_channel(self.node["channel"], channel_credentials)
+            self.stub = lnrpc.LightningStub(channel)
+        except FileNotFoundError as e:
+            print(f"File not found error at {self.node['name']}: {e}")
+        except grpc.RpcError as e:
+            print(f"GRPC error at {self.node['name']}: {e}")
+        except Exception as e:
+            print(f"An error occurred connecting to {self.node['name']}: {e}")
 
     def get_info(self):
         try:
             response = self.stub.GetInfo(ln.GetInfoRequest())
             return response, ""
         except grpc.RpcError as e:
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
             return "", f"Error: Revisa la informacion del nodo al que intentaste acceder por favor.\n Mas informacion del error:\n{e.details()}"
 
     def request_open_channel(self, pubkey, funding_amount, push_amount):
@@ -36,13 +45,19 @@ class NodeConnection:
             response = self.stub.OpenChannelSync(request)
             return response, ""
         except grpc.RpcError as e:
-            return "", f"Error al abrir canal.{e.details()}"
+            if e.details() == "permission denied":
+                return "", f"Error grpc en credenciales {self.node['name']}: {e.details()}"
+            return "", f"Error grpc al abrir canal: {e.details()}"
+        except Exception as e:
+            return "", f"Error al abrir canal: {e}"
 
     def check_pending_channels(self):
         try:
             response = self.stub.PendingChannels(ln.PendingChannelsRequest())
             return response, ""
         except grpc.RpcError as e:
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
             return "", f"Error al revisar canales pendientes.{e.details()}"
 
     def close_channel(self, channel_point, force_close=True):
@@ -59,7 +74,9 @@ class NodeConnection:
             response = self.stub.CloseChannel(request)
             return response, ""
         except grpc.RpcError as e:
-            return "", f"Error al cerrar canal.{e.details()}"
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
+            return "", f"Error al cerrar canal: {e.details()}"
 
     def create_invoice(self, invoice_amt):
         try:
@@ -78,7 +95,9 @@ class NodeConnection:
             response = self.stub.AddInvoice(request)
             return response, ""
         except grpc.RpcError as e:
-            return "", f"Error al crear la factura.{e.details()}"
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
+            return "", f"Error al crear la factura: {e.details()}"
 
     def pay_invoice(self, payment_request):
         try:
@@ -90,7 +109,11 @@ class NodeConnection:
             response = self.stub.SendPaymentSync(request)
             return response, ""
         except grpc.RpcError as e:
-            return "", f"Error al pagar la factura.{e.details()}"
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
+            return "", f"Error grpc al pagar la factura: {e.details()}"
+        except Exception as e:
+            return "", f"Error al pagar la factura: {e}"
 
     def get_invoices(self):
         try:
@@ -100,6 +123,8 @@ class NodeConnection:
             response = self.stub.ListInvoices(request)
             return response, ""
         except grpc.RpcError as e:
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
             return "", f"Error al buscar las facturas creadas.{e.details()}"
               
     def get_payments(self):
@@ -110,7 +135,9 @@ class NodeConnection:
             response = self.stub.ListPayments(request)
             return response, ""
         except grpc.RpcError as e:
-            return "", f"Error al buscar pagos realizados.{e.details()}"
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
+            return "", f"Error al buscar pagos realizados: {e.details()}"
 
     def decode_pr(self, payment_request):
         try:
@@ -120,10 +147,16 @@ class NodeConnection:
             response = self.stub.DecodePayReq(request)
             return response, ""
         except grpc.RpcError as e:
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
             return "", f"Error al decifrar peticion de pago.{e.details()}"
 
     def node_info(self):
         try:
             return self.node, ""
-        except:
-            return "", "Error"
+        except grpc.RpcError as e:
+            if e.details() == "permission denied":
+                return "", f"Error en credenciales {self.node['name']}: {e.details()}"
+            return "", f"Error de grpc al pedir informacion del nodo: {e.details()}"
+        except Exception as e:
+            return "", "Error al pedir informacion del nodo."
