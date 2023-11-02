@@ -47,6 +47,8 @@ class NodeConnection:
         except grpc.RpcError as e:
             if e.details() == "permission denied":
                 return "", f"Error grpc en credenciales {self.node['name']}: {e.details()}"
+            elif "synced" in e.details():
+                return "", f"Error grpc al abrir canal parece que es un problema de sincronización, mina un bloque."
             return "", f"Error grpc al abrir canal: {e.details()}"
         except Exception as e:
             return "", f"Error al abrir canal: {e}"
@@ -101,18 +103,30 @@ class NodeConnection:
 
     def pay_invoice(self, payment_request):
         try:
-            payment_request = payment_request.lower()
+            lowercased_request = payment_request.lower()
             request = ln.SendRequest(
-                payment_request=payment_request,
+                payment_request=lowercased_request,
                 allow_self_payment=False,
             )
             response = self.stub.SendPaymentSync(request)
-            return response, ""
+            payment_list = self.stub.ListPayments(request)
+            if len(payment_list) > 0:
+                for payment in payment_list.payments:
+                    if payment.payment_request == lowercased_request:
+                        return response, ""
+            else:
+                return "", "Error al pagar la factura, revisa que tus canales no estén pendientes."
+                
+            
         except grpc.RpcError as e:
             if e.details() == "permission denied":
                 return "", f"Error en credenciales {self.node['name']}: {e.details()}"
+            elif "synced" in e.details():
+                return "", f"Error grpc al abrir canal parece que es un problema de sincronización, mina un bloque."
             return "", f"Error grpc al pagar la factura: {e.details()}"
         except Exception as e:
+            if "ListPaymentsResponse" in str(e):
+                return "", f"Error al pagar la factura, revisa que tus canales no estén pendientes."
             return "", f"Error al pagar la factura: {e}"
 
     def get_invoices(self):
@@ -125,7 +139,7 @@ class NodeConnection:
         except grpc.RpcError as e:
             if e.details() == "permission denied":
                 return "", f"Error en credenciales {self.node['name']}: {e.details()}"
-            return "", f"Error al buscar las facturas creadas.{e.details()}"
+            return "", f"Error al buscar las facturas creadas: {e.details()}"
               
     def get_payments(self):
         try:
@@ -149,7 +163,7 @@ class NodeConnection:
         except grpc.RpcError as e:
             if e.details() == "permission denied":
                 return "", f"Error en credenciales {self.node['name']}: {e.details()}"
-            return "", f"Error al decifrar peticion de pago.{e.details()}"
+            return "", f"Error al decifrar peticion de pago: {e.details()}"
 
     def node_info(self):
         try:

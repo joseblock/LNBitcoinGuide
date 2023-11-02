@@ -84,7 +84,7 @@ def node_config_menu():
 def node_action_menu(node_connection):
     node, err = node_connection.node_info()
     if err:
-        print(err)
+        print("\n", "\033[91m" + err + "\033[0m")
         return
     print('\n===========================================================\n')
     display_node_info(node_connection)
@@ -110,22 +110,24 @@ def node_action_menu(node_connection):
         push_satoshis = input("Ingresa la cantidad que depositarás a la contraparte del canal: ")
         response, err = node_connection.request_open_channel(pubkey, funding_amount, push_satoshis)
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
             node_action_menu(node_connection)
         node, err = node_connection.node_info()
         drawer("request_open_channel", node["pubkey"], pubkey)
         print(f"""    Monto: {funding_amount}         ==> BALANCE <==       Monto: {push_satoshis}""")
-        print("""
-            Recuerda que al crear un canal lo que haces es una transaccion de bitcoin,
-            para que este funcione correctamente. Por lo tanto se debe minar un bloque,
-            para que se confirme la transaccion.
+        input("""\033[93m
+        Recuerda que al crear un canal, estás realizando una transacción de bitcoin que
+        necesita de 4 confirmaciones para que el canal funcione correctamente. Cada 
+        confirmación representa 1 bloque minado.
+        
+        Para minar bloques en Polar debes ir a la red de nodos y hacer click en Quick Mine.\033[0m
         """)
         node_action_menu(node_connection)
 
     elif choice == '2':
         response, err = node_connection.check_pending_channels()
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
             node_action_menu(node_connection)
         print(response)
         node_action_menu(node_connection)
@@ -134,7 +136,7 @@ def node_action_menu(node_connection):
         channel_pnt = input("Ingresa el channel_point del canal que deseas cerrar: ")
         response, err = node_connection.close_channel(channel_pnt)
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
             node_action_menu(node_connection)
         print("Peticion de cierre de canal exitosa!")
         print("Por las reglas internas de Polar se necesita minar 6 bloques para validar esta petición")
@@ -144,7 +146,7 @@ def node_action_menu(node_connection):
         invoice_amt = input("Ingresa el monto del cobro que deseas hacer: ")
         response, err = node_connection.create_invoice(invoice_amt)
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
             node_action_menu(node_connection)
         print(draws.factura_string)
         print(response.payment_request)
@@ -154,7 +156,7 @@ def node_action_menu(node_connection):
         payment_request = input("Ingresa el payment_request a pagar: ")
         decoded_pr, err = node_connection.decode_pr(payment_request)
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
             node_action_menu(node_connection)
         print(f"\nInformacion relevante al decifrar factura:\n")
         print(f"Monto: {decoded_pr.num_satoshis}")
@@ -166,7 +168,7 @@ def node_action_menu(node_connection):
         if confirmation == "si":
             response, err = node_connection.pay_invoice(payment_request)
             if err:
-                print(err)
+                print("\n", "\033[91m" + err + "\033[0m")
                 node_action_menu(node_connection)
             drawer("pay_invoice", node["pubkey"], decoded_pr.destination)
             print("\n\tSe ha enviado el pago exitosamente!\n")
@@ -181,7 +183,7 @@ def node_action_menu(node_connection):
         pr = input("Ingresa una peticion de pago: ")
         response, err = node_connection.decode_pr(pr)
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
             node_action_menu(node_connection)
         print(response)
         node_action_menu(node_connection)
@@ -195,11 +197,11 @@ def node_action_menu(node_connection):
 def display_node_info(node_connection):
     response, err = node_connection.get_info()
     if err:
-        print(err)
+        print("\n", "\033[91m" + err + "\033[0m")
         return
     node, err = node_connection.node_info()
     if err:
-        print(err)
+        print("\n", "\033[91m" + err + "\033[0m")
         return
     print("Estas en el nodo: ", node["name"])
     print("Su llave pública: ", response.identity_pubkey)
@@ -209,12 +211,12 @@ def display_node_info(node_connection):
 def get_transactions(node_connection):
     response, err = node_connection.get_invoices()
     if err:
-        print(err)
+        print("\n", "\033[91m" + err + "\033[0m")
         node_action_menu(node_connection)
     for invoice in response.invoices:
         decoded, err = node_connection.decode_pr(invoice.payment_request)
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
         print("\n=================================================>\n")
         print(f"Confirmacion de pago: {'Si se pagó' if invoice.settled else 'No se pagó'}")
         print(f"Monto: {invoice.value}")
@@ -224,14 +226,14 @@ def get_transactions(node_connection):
 
     response, err = node_connection.get_payments()
     if err:
-        print(err)
+        print("\n", "\033[91m" + err + "\033[0m")
         node_action_menu(node_connection)
     print("\n=================================================>\n")
     print("==>PAGOS\n")
     for payment in response.payments:
         decoded, err = node_connection.decode_pr(payment.payment_request)
         if err:
-            print(err)
+            print("\n", "\033[91m" + err + "\033[0m")
         print(f"Confirmacion de pago: {'Si se pagó' if payment.status == 2 else 'No se pagó'}")
         print(f"Monto: {payment.value_sat}")
         print(f"Llave publica destinataria: {decoded.destination}\n")
@@ -274,10 +276,10 @@ def challenge():
     if ch1 and ch2:
         clue = wallet["name"]+coffee_shop["name"]+providor["name"]
         key = base64.b64encode(clue.encode('utf-8'))
-        print(f"""
+        print(f"""\033[92m
         FELICIDADES, HAZ COMPLETADO EL DESAFIO!
         Llave del tesoro:
-        {key.decode('utf-8')}
+        {key.decode('utf-8')}\033[0m
         """)
         raise SystemExit(0)
     return
