@@ -109,13 +109,23 @@ class NodeConnection:
                 allow_self_payment=False,
             )
             response = self.stub.SendPaymentSync(request)
-            payment_list = self.stub.ListPayments(request)
-            if len(payment_list) > 0:
-                for payment in payment_list.payments:
-                    if payment.payment_request == lowercased_request:
-                        return response, ""
-            else:
-                return "", "Error al pagar la factura, revisa que tus canales no estén pendientes."
+            return response, ""
+            # payment_list, err = self.get_payments()
+            # if err:
+            #     print("Getting payed")
+            #     return "", err
+            # elif len(payment_list) > 0:
+            #     print("\nSI\n")
+            #     print(len(payment_list))
+            #     print(type(payment_list))
+            #     for payment in payment_list.payments:
+            #         print(type(payment.payment_request))
+            #         print(type(lowercased_request))
+            #         print(payment.payment_request, " == ", lowercased_request)
+            #         if payment.payment_request == lowercased_request:
+            #             return response, ""
+            # else:
+            #     return "", "Error al pagar la factura, revisa que tus canales no estén pendientes."
                 
             
         except grpc.RpcError as e:

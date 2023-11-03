@@ -171,7 +171,7 @@ def node_action_menu(node_connection):
                 print("\n", "\033[91m" + err + "\033[0m")
                 node_action_menu(node_connection)
             drawer("pay_invoice", node["pubkey"], decoded_pr.destination)
-            print("\n\tSe ha enviado el pago exitosamente!\n")
+            print("\n\t\033[93mPago enviado, confirma que esté en tus transacciones como pagada.\033[0m\n")
             node_action_menu(node_connection)
         node_action_menu(node_connection)
 
