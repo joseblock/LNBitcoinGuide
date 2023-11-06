@@ -6,7 +6,8 @@ This project tells a story that will help developers and enthusiasts understand 
     - Go to your Privacy and Security settings on (IOs) and click on Open Anyway.
       ![image](https://github.com/joseblock/LNBitcoinGuide/assets/40869458/24d6371a-65f3-4b87-a2ab-254604943562)
 
-  - Install Docker Desktop
+  - Install Docker
+    - If Polar is not recognizing your docker, [try this out](https://forums.docker.com/t/is-a-missing-docker-sock-file-a-bug/134351/2)
   - Install [Docker-Compose](https://docs.docker.com/desktop/release-notes/)
     - (IOs) To have Docker Compose install a Docker Desktop version before July 2023.
   - Test that Polar UI works
@@ -18,6 +19,8 @@ This project tells a story that will help developers and enthusiasts understand 
 - It should look like this:
   <img width="891" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/1856d727-3903-40c5-af16-c232abfaf513">
 - Now you can press the start button.
+- It should look like this:
+  ![image](https://github.com/joseblock/LNBitcoinGuide/assets/40869458/fc80e2a0-b544-466f-8ed9-337fa0ea85a4)
 - In case it didnt work, try building the network by yourself.
 ## Change source
 
@@ -32,9 +35,10 @@ Each one of this variables will contain this fields:
   - `"admin_macaroon": '~/.polar/networks/4/volumes/lnd/alice/data/chain/bitcoin/regtest/admin.macaroon',`
   - `"channel": '127.0.0.1:10001'`
 
-Update them by replacing each field mentioned before with alice, bob and carols node information in polar:
-  <img width="884" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/f6f0507e-37f0-4017-b244-0a64453eaeb9">
-  <img width="1038" alt="image" src="https://github.com/joseblock/LNBitcoinGuide/assets/40869458/fec54fef-93c6-4f11-bfe4-2dba390b7f2a">
+Update them by replacing each field mentioned before like the following video:
+[![Watch the video](https://img.youtube.com/vi/SiuX6BvfEv8/0.jpg)](https://www.youtube.com/watch?v=SiuX6BvfEv8)
+
 ## Run the code:
+  - `pip3 install grpcio grpcio-tools googleapis-common-protos`
   - `python3 menu.py` 
 
