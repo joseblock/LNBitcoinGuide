@@ -42,7 +42,7 @@ Update them by replacing each field mentioned before like the following video:
   - `pip3 install grpcio grpcio-tools googleapis-common-protos`
   - `python3 menu.py` 
 
-## If you are interested in doing a similar project here are some steps to follow:
+## If you're keen on embarking on a similar project, here's a guide to help you get started:
 1. First you need to think of a node network provider, it can be done with testing or real nodes, Polar is a testing local network.
 2. Now depending on the node type you will need to find an API or node manager through code in this case I used [LND api](https://lightning.engineering/api-docs/category/lightning-service/index.html) with proto.
 3. [Here](https://github.com/lightningnetwork/lnd/blob/master/docs/grpc/python.md) is a sample project to understand better the requirements.
