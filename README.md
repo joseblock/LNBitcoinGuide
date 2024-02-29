@@ -44,6 +44,6 @@ Update them by replacing each field mentioned before like the following video:
 
 ## If you're keen on embarking on a similar project, here's a guide to help you get started:
 1. First you need to think of a node network provider, it can be done with testing or real nodes, Polar is a testing local network.
-2. Now depending on the node type you will need to find an API or node manager through code in this case I used [LND api](https://lightning.engineering/api-docs/category/lightning-service/index.html) with proto.
+2. Now depending on the node type you will need to find an API node manager, in this case I used [LND api](https://lightning.engineering/api-docs/category/lightning-service/index.html) with proto.
 3. [Here](https://github.com/lightningnetwork/lnd/blob/master/docs/grpc/python.md) is a sample project to understand better the requirements.
 4. Create the necessary endpoints to consume the node and feel free to build whatever you would like to do with Lightning Network.
